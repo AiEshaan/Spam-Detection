@@ -6,15 +6,36 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, Flatten, Dense, MaxPool2D, Dropout, BatchNormalization
 from imblearn.over_sampling import RandomOverSampler
+import os
 
-# Step 1: Unzip the dataset
-zip_path = "hmnist_28_28_RGB.csv (2)/hmnist_28_28_RGB.csv.zip"
-extract_to = "."
-with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_to)
+# Get paths relative to this file's location
+current_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.join(current_dir, '..', '..', 'data')
+models_dir = os.path.join(current_dir, '..', '..', 'models')
+
+# Step 1: Check and extract dataset if needed
+# Adjust zip path to check in data or root
+possible_zips = [
+    os.path.join(data_dir, "hmnist_28_28_RGB.csv.zip"),
+    os.path.join(current_dir, '..', '..', "hmnist_28_28_RGB.csv (2)", "hmnist_28_28_RGB.csv.zip"),
+]
+zip_path = None
+for p in possible_zips:
+    if os.path.exists(p):
+        zip_path = p
+        break
+if zip_path:
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(data_dir)
+else:
+    print("Warning: Dataset zip not found, looking for extracted CSV in data folder.")
 
 # Step 2: Load and preprocess data
-df = pd.read_csv("hmnist_28_28_RGB.csv")
+csv_path = os.path.join(data_dir, "hmnist_28_28_RGB.csv")
+if not os.path.exists(csv_path):
+    print(f"Error: Dataset CSV not found at {csv_path}")
+    exit(1)
+df = pd.read_csv(csv_path)
 
 # Train test split
 fractions = np.array([0.8, 0.2])
@@ -64,4 +85,5 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 
 # Step 4: Train the model and save
 history = model.fit(x_train, y_train, epochs=1, validation_data=(x_test, y_test), batch_size=32)
-model.save('best_model.h5')
+model.save(os.path.join(models_dir, 'best_model.h5'))
+print(f"Model saved to {os.path.join(models_dir, 'best_model.h5')}")

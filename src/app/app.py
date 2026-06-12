@@ -2,9 +2,15 @@
 from flask import Flask, request, render_template, send_file, make_response
 from PIL import Image
 import numpy as np
-import skin_cancer_detection as SCD
-import tempfile
+import sys
 import os
+
+# Add project root to sys.path to find src package
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from src.model import skin_cancer_detection as SCD
+
+import tempfile
 from io import StringIO, BytesIO
 import csv
 from reportlab.lib.pagesizes import letter
@@ -12,7 +18,8 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as ReportLabImage
 from reportlab.lib.styles import getSampleStyleSheet
 
-app = Flask(__name__)
+# Set template folder path explicitly
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
 
 
 @app.route("/", methods=["GET", "POST"])

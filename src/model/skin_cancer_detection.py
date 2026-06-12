@@ -67,10 +67,14 @@ model.add(Dense(7, activation="softmax"))
 model.summary()
 
 # Load weights if file exists
-if os.path.exists("best_model.h5"):
-    model.load_weights("best_model.h5")
+# Get path to models folder relative to this file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+models_dir = os.path.join(current_dir, '..', '..', 'models')
+model_path = os.path.join(models_dir, "best_model.h5")
+if os.path.exists(model_path):
+    model.load_weights(model_path)
 else:
-    print("Warning: best_model.h5 not found, using untrained weights for testing.")
+    print(f"Warning: {model_path} not found, using untrained weights for testing.")
 
 
 def generate_gradcam(img_array, class_idx):

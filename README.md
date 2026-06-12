@@ -25,24 +25,24 @@ A deep learning-based skin cancer classification system using Convolutional Neur
 1. **Clone the repository**
    ```bash
    git clone https://github.com/AiEshaan/Spam-Detection.git
-   cd Skin-Cancer-Detection-MNIST
+   cd Spam-Detection
    ```
 
 2. **Install dependencies**
    ```bash
-   pip install -r requirements.txt
+   pip install -r config/requirements.txt
    ```
 
 3. **Train the model (optional but recommended for optimal performance)**
    First, download the dataset from [Kaggle](https://www.kaggle.com/kmader/skin-cancer-mnist-ham10000), then run:
    ```bash
-   python train_model.py
+   python src/model/train_model.py
    ```
-   This will generate `best_model.h5`
+   This will generate `models/best_model.h5`
 
 4. **Run the application**
    ```bash
-   python app.py
+   python main.py
    ```
 
 5. **Access the application**
@@ -58,20 +58,38 @@ A deep learning-based skin cancer classification system using Convolutional Neur
 
 ## Project Structure
 
+This project follows an industry-standard, modular folder structure:
+
 ```
 Skin-Cancer-Detection-MNIST/
-├── app.py                      # Flask web application
-├── skin_cancer_detection.py    # CNN model definition
-├── train_model.py              # Script to train the model
-├── requirements.txt            # Project dependencies
-├── templates/                  # HTML templates
-│   ├── home.html              # Home page
-│   ├── reults.html            # Single image result page
-│   └── multi_results.html     # Multi-image results page
-├── Skin_Cancer_Detection.ipynb
-├── model_architecture.png
-├── model.png
-└── README.md
+├── assets/                     # Static assets (images, diagrams)
+│   ├── model.png
+│   ├── model_architecture.png
+│   ├── output_1.png
+│   └── tester.jpg
+├── config/                     # Configuration files
+│   ├── Procfile                # Heroku deployment config
+│   └── requirements.txt        # Project dependencies
+├── data/                       # Datasets and data files
+│   └── HAM10000_metadata.csv
+├── models/                     # Saved model weights and checkpoints
+├── notebooks/                  # Jupyter notebooks for exploration
+│   ├── Skin_Cancer_Detection.ipynb
+│   └── Skin_Cancer_Detection copy.ipynb
+├── src/                        # Source code
+│   ├── app/                    # Flask web application
+│   │   ├── templates/          # HTML templates
+│   │   │   ├── home.html
+│   │   │   ├── multi_results.html
+│   │   │   └── reults.html
+│   │   ├── app.py
+│   │   └── wsgi.py
+│   └── model/                  # Model architecture and training
+│       ├── skin_cancer_detection.py
+│       └── train_model.py
+├── LICENSE
+├── README.md
+└── main.py                     # Main entry point for the application
 ```
 
 ## Model Architecture
