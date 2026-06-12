@@ -1,127 +1,110 @@
-# Skin-Cancer-Classification
+# Skin Cancer Detection
 
-The primary goal of this work is to build up a Model of Skin Cancer Detection System utilizing Machine Learning Algorithms. After experimenting with many different architectures for the CNN model It is found that adding the BatchNormalization layer after each Dense, and MaxPooling2D layer can help increase the validation accuracy. In future, a mobile application can be made.
+A deep learning-based skin cancer classification system using Convolutional Neural Networks (CNN) built with Keras and TensorFlow. This project includes a Flask web application for easy interaction.
 
-Play with Skin Cancer Images here: (https://skin-cancer-detection-cnn.herokuapp.com/)
+## Features
 
-## Model Architecture:
+- **Multi-Image Upload**: Upload multiple skin lesion images at once for batch analysis
+- **Confidence Score Display**: Visual confidence scores for all prediction classes using progress bars
+- **Prediction History**: Local browser storage to track and view past predictions
+- **Modern UI/UX**: Clean, responsive design with smooth interactions
+- **Detailed Condition Info**: Information about each skin condition, including potential causes and symptoms
+- **Disclaimer**: Prominent medical disclaimer to remind users this is not a substitute for professional care
 
-![alt_text](https://github.com/charanhu/Skin-Cancer-Detection-MNIST/blob/main/model_architecture.png)
+## Installation
 
-## Data
+### Prerequisites
 
-https://www.kaggle.com/kmader/skin-cancer-mnist-ham10000
+- Python 3.7+
+- pip (Python package manager)
 
+### Steps
 
-## How to Run the App:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AiEshaan/Spam-Detection.git
+   cd Skin-Cancer-Detection-MNIST
+   ```
 
-## Method1
-•Run the app.py file
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-•Go to http://localhost:5000/ on your browser
+3. **Train the model (optional but recommended for optimal performance)**
+   First, download the dataset from [Kaggle](https://www.kaggle.com/kmader/skin-cancer-mnist-ham10000), then run:
+   ```bash
+   python train_model.py
+   ```
+   This will generate `best_model.h5`
 
-•Use the Upload and button to browse and upload the image you want
+4. **Run the application**
+   ```bash
+   python app.py
+   ```
 
-•Hit submit to get the results.
+5. **Access the application**
+   Open your browser and navigate to `http://localhost:5000`
 
-## Method 2
-•Depploy it to Azure Webapp or Heroku App through github repository
+## Usage
 
-•Go to url generated after deployment on your browser
+1. Go to the home page
+2. Click on "Choose File(s)" to upload one or more skin lesion images
+3. Click "Analyze Image(s)"
+4. View the prediction results with confidence scores
+5. Check your prediction history on the home page
 
-•Use the Upload and button to browse and upload the image you want
+## Project Structure
 
-•Hit submit to get the results.
-
-
-
-## Libraries Used: 
-
-• numpy
-
-• keras
-
-• tensorflow-cpu==2.5.0
-
-• pandas
-
-• matplotlib
-
-• pillow
-
-• flask
-
-• seaborn
-
-• gunicorn
-
-## Skin_Cancer_Detection.ipynb:
-This is the Jupyter notebook used to define and train the model.
-
-## app.py:
-This is the flask app that needs to run in order to use the webapp
-
-## skin_cancer_detection.py:
-This contains the definition of the CNN model.
-
-## best_model.h5:
-Contains the weights of the best model.
-
-## CNN model summary:
-
-```python
-Model: "sequential"
-_________________________________________________________________
-Layer (type)                 Output Shape              Param #   
-=================================================================
-conv2d (Conv2D)              (None, 28, 28, 16)        448       
-_________________________________________________________________
-max_pooling2d (MaxPooling2D) (None, 14, 14, 16)        0         
-_________________________________________________________________
-batch_normalization (BatchNo (None, 14, 14, 16)        64        
-_________________________________________________________________
-conv2d_1 (Conv2D)            (None, 12, 12, 32)        4640      
-_________________________________________________________________
-conv2d_2 (Conv2D)            (None, 10, 10, 64)        18496     
-_________________________________________________________________
-max_pooling2d_1 (MaxPooling2 (None, 5, 5, 64)          0         
-_________________________________________________________________
-batch_normalization_1 (Batch (None, 5, 5, 64)          256       
-_________________________________________________________________
-conv2d_3 (Conv2D)            (None, 3, 3, 128)         73856     
-_________________________________________________________________
-conv2d_4 (Conv2D)            (None, 1, 1, 256)         295168    
-_________________________________________________________________
-flatten (Flatten)            (None, 256)               0         
-_________________________________________________________________
-dropout (Dropout)            (None, 256)               0         
-_________________________________________________________________
-dense (Dense)                (None, 256)               65792     
-_________________________________________________________________
-batch_normalization_2 (Batch (None, 256)               1024      
-_________________________________________________________________
-dropout_1 (Dropout)          (None, 256)               0         
-_________________________________________________________________
-dense_1 (Dense)              (None, 128)               32896     
-_________________________________________________________________
-batch_normalization_3 (Batch (None, 128)               512       
-_________________________________________________________________
-dense_2 (Dense)              (None, 64)                8256      
-_________________________________________________________________
-batch_normalization_4 (Batch (None, 64)                256       
-_________________________________________________________________
-dropout_2 (Dropout)          (None, 64)                0         
-_________________________________________________________________
-dense_3 (Dense)              (None, 32)                2080      
-_________________________________________________________________
-batch_normalization_5 (Batch (None, 32)                128       
-_________________________________________________________________
-dense_4 (Dense)              (None, 7)                 231       
-=================================================================
-Total params: 504,103
-Trainable params: 502,983
-Non-trainable params: 1,120
-_________________________________________________________________
+```
+Skin-Cancer-Detection-MNIST/
+├── app.py                      # Flask web application
+├── skin_cancer_detection.py    # CNN model definition
+├── train_model.py              # Script to train the model
+├── requirements.txt            # Project dependencies
+├── templates/                  # HTML templates
+│   ├── home.html              # Home page
+│   ├── reults.html            # Single image result page
+│   └── multi_results.html     # Multi-image results page
+├── Skin_Cancer_Detection.ipynb
+├── model_architecture.png
+├── model.png
+└── README.md
 ```
 
+## Model Architecture
 
+The model is a deep CNN with the following architecture:
+
+- **Input**: 28x28x3 RGB images
+- **Convolutional Layers**: Multiple Conv2D layers for feature extraction
+- **Pooling Layers**: MaxPooling2D layers for downsampling
+- **Batch Normalization**: Applied after Dense and MaxPooling2D layers to stabilize training
+- **Dropout Layers**: Regularization to prevent overfitting
+- **Dense Layers**: Classification head with softmax activation
+
+Total parameters: ~504k
+
+## Classes Detected
+
+The model classifies skin lesions into 7 categories:
+
+1. Actinic keratoses and intraepithelial carcinoma / Bowen's disease (akiec)
+2. Basal cell carcinoma (bcc)
+3. Benign keratosis-like lesions (solar lentigines / seborrheic keratoses and lichen-planus like keratoses) (bkl)
+4. Dermatofibroma (df)
+5. Melanoma (mel)
+6. Melanocytic nevi (nv)
+7. Vascular lesions (angiomas, angiokeratomas, pyogenic granulomas and hemorrhage) (vasc)
+
+## Dataset
+
+This project uses the [HAM10000 dataset](https://www.kaggle.com/kmader/skin-cancer-mnist-ham10000) from Kaggle, which contains 10,015 dermatoscopic images of skin lesions.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Disclaimer
+
+**IMPORTANT**: This tool is for educational purposes only and is NOT a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified dermatologist or healthcare provider for any concerns about skin lesions or skin cancer.
