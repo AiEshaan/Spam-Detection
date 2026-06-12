@@ -77,7 +77,7 @@ def show():
         pic.save(temp_file.name)
         temp_files.append(temp_file.name)
         
-        inputimg = Image.open(temp_file.name)
+        inputimg = Image.open(temp_file.name).convert('RGB')
         inputimg = inputimg.resize((28, 28))
         img = np.array(inputimg).reshape(-1, 28, 28, 3)
         predictions = SCD.model.predict(img)
