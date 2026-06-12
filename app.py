@@ -1,19 +1,23 @@
 # The primary goal of this work is to build up a Model of Skin Cancer Detection System utilizing Machine Learning Algorithms. After experimenting with many different architectures for the CNN model It is found that adding the BatchNormalization layer after each Dense, and MaxPooling2D layer can help increase the validation accuracy. In future, a mobile application can be made.
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_file, make_response
 from PIL import Image
 import numpy as np
 import skin_cancer_detection as SCD
+import tempfile
+import os
+from io import StringIO, BytesIO
+import csv
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as ReportLabImage
+from reportlab.lib.styles import getSampleStyleSheet
 
 app = Flask(__name__)
 
 
 @app.route("/", methods=["GET", "POST"])
 def runhome():
-
     return render_template("home.html")
-
-
-# The primary goal of this work is to build up a Model of Skin Cancer Detection System utilizing Machine Learning Algorithms. After experimenting with many different architectures for the CNN model It is found that adding the BatchNormalization layer after each Dense, and MaxPooling2D layer can help increase the validation accuracy. In future, a mobile application can be made.
 
 
 def get_result_info(class_ind):
@@ -57,9 +61,16 @@ def get_result_info(class_ind):
 def show():
     pics = request.files.getlist("pic")
     results = []
+    temp_files = []
 
     for pic in pics:
-        inputimg = Image.open(pic)
+        # Save uploaded file temporarily
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(pic.filename)[1])
+        temp_file.close()
+        pic.save(temp_file.name)
+        temp_files.append(temp_file.name)
+        
+        inputimg = Image.open(temp_file.name)
         inputimg = inputimg.resize((28, 28))
         img = np.array(inputimg).reshape(-1, 28, 28, 3)
         predictions = SCD.model.predict(img)
@@ -76,20 +87,77 @@ def show():
 
         info = get_result_info(class_ind)
         
+        # Generate Grad-CAM
+        try:
+            heatmap = SCD.generate_gradcam(img, class_ind)
+            superimposed_img = SCD.overlay_gradcam_on_image(temp_file.name, heatmap)
+            gradcam_b64 = SCD.gradcam_to_base64(superimposed_img)
+        except Exception as e:
+            print(f"Grad-CAM error: {e}")
+            gradcam_b64 = None
+        
         results.append({
             "result": result,
             "info": info,
             "confidence_scores": confidence_scores,
-            "max_prob": round(float(max_prob)*100, 2)
+            "max_prob": round(float(max_prob)*100, 2),
+            "gradcam_b64": gradcam_b64,
+            "class_ind": class_ind
         })
+
+    # Store results in session for export
+    global export_data
+    export_data = results
 
     if len(results) == 1:
         return render_template("reults.html", result=results[0]['result'], info=results[0]['info'], 
                              confidence_scores=results[0]['confidence_scores'], 
-                             max_prob=results[0]['max_prob'])
+                             max_prob=results[0]['max_prob'],
+                             gradcam_b64=results[0]['gradcam_b64'])
     else:
         return render_template("multi_results.html", results=results)
+
+
+@app.route("/export/csv")
+def export_csv():
+    si = StringIO()
+    cw = csv.writer(si)
+    cw.writerow(["Index", "Prediction", "Confidence (%)"])
+    for i, result in enumerate(export_data):
+        cw.writerow([i+1, result['result'], result['max_prob']])
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=skin_cancer_results.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+
+@app.route("/export/pdf")
+def export_pdf():
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    story = []
+
+    story.append(Paragraph("Skin Cancer Detection Report", styles['Title']))
+    story.append(Spacer(1, 12))
+
+    for i, result in enumerate(export_data):
+        story.append(Paragraph(f"Image {i+1} Prediction", styles['Heading2']))
+        story.append(Paragraph(f"Result: {result['result']}", styles['Normal']))
+        story.append(Paragraph(f"Confidence: {result['max_prob']}%", styles['Normal']))
+        story.append(Spacer(1, 6))
+
+    doc.build(story)
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='skin_cancer_results.pdf',
+        mimetype='application/pdf'
+    )
+
 if __name__ == "__main__":
+    export_data = []
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 

@@ -44,6 +44,9 @@
     .text-primary {
       color: #a0aec0 !important;
     }
+    .export-buttons .btn {
+      margin: 0.5rem;
+    }
   </style>
   <title>Results | Skin Cancer Detection</title>
 </head>
@@ -63,6 +66,12 @@
             <h3 class="display-5 mb-3">{{ result.result }}</h3>
             <p class="display-6 text-primary">Confidence: {{ result.max_prob }}%</p>
           </div>
+          {% if result.gradcam_b64 %}
+          <div class="mb-5 text-center">
+            <h4 class="mb-4">Grad-CAM Visualization</h4>
+            <img src="{{result.gradcam_b64}}" class="img-fluid rounded" style="max-width: 300px;" alt="Grad-CAM">
+          </div>
+          {% endif %}
           <div class="mb-5">
             {{ result.info|safe }}
           </div>
@@ -85,6 +94,11 @@
 
         <div class="disclaimer p-4 rounded mb-4">
           <p class="mb-0"><strong>DISCLAIMER:</strong> This is an AI-assisted tool for educational purposes only. It is NOT a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified dermatologist or healthcare provider.</p>
+        </div>
+
+        <div class="text-center export-buttons mb-4">
+          <a href="/export/csv" class="btn btn-primary">Download CSV</a>
+          <a href="/export/pdf" class="btn btn-primary">Download PDF</a>
         </div>
 
         <div class="text-center">

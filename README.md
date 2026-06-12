@@ -7,6 +7,8 @@ A deep learning-based skin cancer classification system using Convolutional Neur
 - **Multi-Image Upload**: Upload multiple skin lesion images at once for batch analysis
 - **Confidence Score Display**: Visual confidence scores for all prediction classes using progress bars
 - **Prediction History**: Local browser storage to track and view past predictions
+- **Grad-CAM Visualization**: Shows which parts of the image the model focused on for its prediction
+- **Exportable Reports**: Download prediction results as CSV or PDF files
 - **Modern UI/UX**: Clean, responsive design with smooth interactions
 - **Detailed Condition Info**: Information about each skin condition, including potential causes and symptoms
 - **Disclaimer**: Prominent medical disclaimer to remind users this is not a substitute for professional care

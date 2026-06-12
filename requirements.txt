@@ -7,3 +7,5 @@ pillow
 flask
 seaborn
 gunicorn
+tf-keras-vis
+reportlab
