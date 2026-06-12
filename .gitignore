@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+*~
+.env
+.vscode/
+best_model.h5
+hmnist_28_28_RGB.csv (2)/
+hmnist_28_28_RGB.csv/
+HAM10000_images_part_1/
+HAM10000_images_part_2/
+desktop.ini
